@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Spinner } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { NewsCardList } from "./NewsCardList";
+import { NewsModal } from './NewsModal';
 import { getNewsAll, getNewsSearch } from "../../redux/slices/newsDataSlice";
 
 export function NewsCardContainer() {
@@ -21,8 +22,12 @@ export function NewsCardContainer() {
       ) : newsData.length === 0 ?(
         <h1>No data</h1>
       ) : (
-        <NewsCardList newsData={newsData}/>
+        <>
+          <NewsCardList newsData={newsData}/>
+          
+        </>
       )}
+      <NewsModal/>
       </Container>
     </>
   )

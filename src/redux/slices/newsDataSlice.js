@@ -17,13 +17,13 @@ export const getNewsAll = createAsyncThunk(
 export const getNewsSearch = createAsyncThunk(
   'news/getNewsSearch',
   async(arg, {getState}) => {
-    const form = searhForm(getState().search)
+    const form = searchForm(getState().search)
     const response = await fetcher('POST', form)
     return response.json()
   }
 )
 
-function searhForm(values) {
+function searchForm(values) {
   const { searchString, searchTitle, searchSummary, searchDate, dateRange } = values
   const form = new FormData()
     if(searchTitle) form.append('title', searchString)
