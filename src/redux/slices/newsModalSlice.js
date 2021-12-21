@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetcher } from '../../services/fetchAPI';
+import { createSlice } from '@reduxjs/toolkit';
 
 
 const initialState = {

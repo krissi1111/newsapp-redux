@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetcher } from '../../services/fetchAPI';
+import { News } from '../../services/fetchAPI';
 
 
 const initialState = {
@@ -15,8 +15,8 @@ export const getNewsSearch = createAsyncThunk(
   async(arg, {getState}) => {
     const state = getState()
     const form = new FormData()
-    form.append("title", state.search.searchString)
-    const response = await fetcher('POST', form)
+    form.append('title', state.search.searchString)
+    const response = await News.getSearch(form)
     return response.json()
   }
 )
@@ -43,8 +43,8 @@ export const searchSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.
-    addCase(getNewsSearch.pending, (state) => {
+    builder
+    .addCase(getNewsSearch.pending, (state) => {
       state.status = 'loading';
     })
     .addCase(getNewsSearch.fulfilled, (state, action) => {

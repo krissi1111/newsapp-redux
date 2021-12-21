@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Button, Card, Form, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { getNewsSearch } from "../../redux/slices/newsDataSlice";
@@ -8,7 +7,7 @@ import {
   setSearchTitle, 
   setSearchSummary,
   selectSearch
-} from '../../redux/slices/searchSlice';
+} from '../../redux/slices/newsSearchSlice';
 import { SearchDate } from "./SearchDate";
 
 
