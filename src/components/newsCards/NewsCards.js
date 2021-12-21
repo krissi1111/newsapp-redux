@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Container, Spinner } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { NewsCardList } from "./NewsCardList";
 import { NewsModal } from './NewsModal';
-import { getNewsAll, getNewsSearch } from "../../redux/slices/newsDataSlice";
+import { getNewsSearch } from "../../redux/slices/newsDataSlice";
 
 export function NewsCardContainer() {
   const newsData = useSelector((state) => state.newsCard.newsData)
@@ -16,18 +16,18 @@ export function NewsCardContainer() {
 
   return (
     <>
-    <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50rem'}}>
-      {apiStatus !== 'loaded' ?(
-        <Spinner animation="border"/>
-      ) : newsData.length === 0 ?(
-        <h1>No data</h1>
-      ) : (
-        <>
-          <NewsCardList newsData={newsData}/>
-          
-        </>
-      )}
-      <NewsModal/>
+      <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50rem'}}>
+        {apiStatus !== 'loaded' ?(
+          <Spinner animation="border"/>
+        ) : newsData.length === 0 ?(
+          <h1>No data</h1>
+        ) : (
+          <>
+            <NewsCardList newsData={newsData}/>
+            
+          </>
+        )}
+        <NewsModal/>
       </Container>
     </>
   )

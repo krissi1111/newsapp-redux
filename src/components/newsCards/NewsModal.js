@@ -1,6 +1,7 @@
-import { Button, ButtonGroup, Card, Form, Image, Modal, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Image, Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { showModal } from "../../redux/slices/newsModalSlice";
+import { CommentContainer } from "../comments/Comments";
 
 
 export function NewsModal(props) {
@@ -42,6 +43,7 @@ export function NewsModal(props) {
               {summary}
             </p>
           </Modal.Body>
+            <CommentContainer newsId={id}/>
           <Modal.Footer style={{display:'flex', justifyContent: 'space-between'}}>
             <Button variant="outline-primary">favButtonText</Button>
             <ButtonGroup style={{ display:'flex', alignItems:'center'}}>
