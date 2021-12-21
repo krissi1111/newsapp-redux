@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Accordion, Form } from 'react-bootstrap';
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import DatePicker, { CalendarContainer } from "react-datepicker";
@@ -8,7 +7,7 @@ import {
   setSearchDate,
   setDateRange,
   selectSearch
-} from '../../redux/slices/searchSlice';
+} from '../../redux/slices/newsSearchSlice';
 
 export function SearchDate() {
   const dispatch = useDispatch();
