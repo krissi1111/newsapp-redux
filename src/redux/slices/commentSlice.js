@@ -18,10 +18,10 @@ export const getComments = createAsyncThunk(
 
 export const addComment = createAsyncThunk(
   'comments/addComment',
-  async(newsId, commentText) => {
+  async(arg) => {
     const form = new FormData()
-    form.append('newsId', newsId)
-    form.append('commentText', commentText)
+    form.append('newsId', arg.newsId)
+    form.append('commentText', arg.commentText)
     const response = await Comments.add(form)
     return response.json()
   }
@@ -52,7 +52,9 @@ export const commentSlice = createSlice({
   name: 'comments',
   initialState,
   reducers: {
-
+    unloadComments: (state) => {
+      state.status = 'idle'
+    }
   },
   extraReducers: builder => {
     builder
@@ -65,5 +67,7 @@ export const commentSlice = createSlice({
     })
   }
 })
+
+export const { unloadComments } = commentSlice.actions;
 
 export default commentSlice.reducer
