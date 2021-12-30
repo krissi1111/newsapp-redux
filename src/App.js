@@ -1,25 +1,54 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { NewsCardContainer } from './components/newsCards/NewsCards';
 import { SearchContainer } from './components/search/Search'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Card, Col, Container, Navbar, Row } from 'react-bootstrap';
+import { loginToken } from './redux/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthModal } from './components/auth/AuthModal';
+import { PopularContainer } from './components/popular.js/Popular';
 
 function App() {
-  return (
-    <Container fluid>
-      <Row>
-        <Col xs sm md lg xl xxl="2">
-          <SearchContainer/>
-        </Col>
-        <Col xs sm md lg xl xxl="8">
-          <NewsCardContainer/>
-        </Col>
-        <Col xs sm md lg xl xxl="2">
+  const dispatch = useDispatch();
+  const apiStatus = useSelector((state) => state.auth.loggedIn)
+  useEffect(() =>{
+    if(!apiStatus) dispatch(loginToken())
+  }, [dispatch, apiStatus])
 
-        </Col>
-      </Row>
-    </Container>
-    
+  return (
+    <>
+      <Navbar bg="secondary" variant="dark" fixed="top">
+        <Container fluid>
+          <Navbar.Brand style={{color:'white'}}>NewsApp</Navbar.Brand>
+          <AuthModal/>
+        </Container>
+      </Navbar>
+      <Container fluid style={{marginTop:'4rem'}}>
+        <Row>
+          <Col xs sm md lg xl xxl="2">
+            <Card>
+              <Card.Body>
+                <SearchContainer/>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs sm md lg xl xxl="8">
+            <Card>
+              <Card.Body>
+                <NewsCardContainer/>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs sm md lg xl xxl="2">
+            <Card>
+              <Card.Body>
+                <PopularContainer/>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 
