@@ -3,7 +3,17 @@ import { News } from '../../services/fetchAPI';
 
 const initialState = {
   newsData: [],
+  newsDataView: [],
+  newsDataPopularCom: [],
+  newsDataPopularFav: [],
+  newsDataStart: 0,
+  newsDataEnd: 10,
+  newsDataMaxLength: 100,
+  pageCurrent: 0,
+  pageCount: 10,
+  itemPerPage: 10,
   status: 'idle',
+  favStatus: false
 };
 
 export const getNewsAll = createAsyncThunk(
@@ -23,21 +33,51 @@ export const getNewsSearch = createAsyncThunk(
   }
 )
 
+export const getNewsPopular = createAsyncThunk(
+  'news/getNewsPopular',
+  async(arg) => {
+    const response = await News.getPopular()
+    return response.json()
+  }
+)
+
 function searchForm(values) {
   const { searchString, searchTitle, searchSummary, searchDate, dateRange } = values
   const form = new FormData()
     if(searchTitle) form.append('title', searchString)
     if(searchSummary) form.append('summary', searchString)
     if(searchDate) {
-      form.append('dateStart', dateRange[0].toISOString())
-      form.append('dateEnd', dateRange[1].toISOString())
+      form.append('dateStart', dateRange[0])
+      form.append('dateEnd', dateRange[1])
     }
   return form
 }
 
-export const newsCardSlice = createSlice({
+export const newsDataSlice = createSlice({
   name: 'newsCard',
   initialState,
+  reducers: {
+    setNewsDataView: (state) => {
+      let { itemPerPage, pageCurrent, pageCount, newsData } = state
+      let start = itemPerPage * pageCurrent
+      let stop
+      if(pageCurrent !== pageCount - 1) stop = start + itemPerPage
+      else stop = state.newsDataMaxLength
+      state.newsDataView = newsData.slice(start, stop)
+    },
+    changePage: (state, action) => {
+      state.pageCurrent = action.payload
+      newsDataSlice.caseReducers.setNewsDataView(state)
+    },
+    changeItemPerPage: (state, action) => {
+      state.pageCurrent = 0
+      let length = Math.min(state.newsData.length, state.newsDataMaxLength)
+      let itemPerPage = action.payload
+      state.pageCount = Math.ceil(length/itemPerPage)
+      state.itemPerPage = itemPerPage
+      newsDataSlice.caseReducers.setNewsDataView(state)
+    }
+  },
 
   extraReducers: builder => {
     builder
@@ -46,17 +86,36 @@ export const newsCardSlice = createSlice({
       })
       .addCase(getNewsAll.fulfilled, (state, action) => {
         state.status = 'loaded';
-        state.newsData = action.payload;
+        let news = action.payload
+        state.newsData = news;
+        state.pageCurrent = 0
+        let length = Math.min(state.newsData.length, state.newsDataMaxLength)
+        let itemPerPage = state.itemPerPage
+        state.pageCount = Math.ceil(length/itemPerPage)
+        newsDataSlice.caseReducers.setNewsDataView(state)
       })
       .addCase(getNewsSearch.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(getNewsSearch.fulfilled, (state, action) => {
         state.status = 'loaded';
-        state.newsData = action.payload;
+        let news = action.payload
+        state.newsData = news;
+        state.pageCurrent = 0
+        let length = Math.min(state.newsData.length, state.newsDataMaxLength)
+        let itemPerPage = state.itemPerPage
+        state.pageCount = Math.ceil(length/itemPerPage)
+        newsDataSlice.caseReducers.setNewsDataView(state)
       })
-      ;
+      .addCase(getNewsPopular.fulfilled, (state, action) => {
+        let {comments, favorites} = action.payload
+        state.newsDataPopularCom = comments
+        state.newsDataPopularFav = favorites
+        state.favStatus = true
+      });
   }
 })
 
-export default newsCardSlice.reducer;
+export const { changePage, changeItemPerPage } = newsDataSlice.actions
+
+export default newsDataSlice.reducer;
