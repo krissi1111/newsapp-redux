@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.0",
+    "@restart/ui": "^0.2.5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -15,7 +16,8 @@
     "react-datepicker": "^4.5.0",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
-    "react-scripts": "5.0.0"
+    "react-scripts": "5.0.0",
+    "react-waypoint": "^10.1.0"
   },
   "scripts": {
     "predeploy": "npm run build",
