@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Accordion, Form } from 'react-bootstrap';
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import DatePicker, { CalendarContainer } from "react-datepicker";
@@ -12,7 +13,8 @@ import {
 export function SearchDate() {
   const dispatch = useDispatch();
   const values = useSelector(selectSearch)
-  const [dateStart, dateEnd] = values.dateRange
+  const [dateRangeValue, setDateRangeValue] = useState([new Date(), new Date()])
+  const [dateStart, dateEnd] = dateRangeValue
   const dateSearch = values.SearchDate
 
   const con = ({className, children}) => {
@@ -24,6 +26,15 @@ export function SearchDate() {
         </CalendarContainer>
       </div>
     )
+  }
+
+  function handleDateRange(dates){
+    setDateRangeValue(dates)
+    if(dates[1] !== null) {
+      let dateStart = dates[0].toISOString()
+      let dateEnd = dates[1].toISOString()
+      dispatch(setDateRange([dateStart, dateEnd]))
+    }
   }
 
   return(
@@ -39,11 +50,7 @@ export function SearchDate() {
         <DatePicker
           selectsRange={true}
           selected={dateStart} 
-          onChange={(update) => 
-            {
-              dispatch(setDateRange(update))
-            }
-          } 
+          onChange={(update) => handleDateRange(update)} 
           startDate={dateStart}
           endDate={dateEnd}
           inline={true}

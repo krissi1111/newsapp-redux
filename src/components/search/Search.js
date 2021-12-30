@@ -1,7 +1,6 @@
 import { Button, Card, Form, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { getNewsSearch } from "../../redux/slices/newsDataSlice";
-
 import {
   setSearchString, 
   setSearchTitle, 
@@ -13,10 +12,10 @@ import { SearchDate } from "./SearchDate";
 
 export function SearchContainer(props) {
   const dispatch = useDispatch();
+  const handleSearch = (event) => dispatch(getNewsSearch(event.target.value))
 
   return(
-    <Card>
-      <Card.Body>
+    <>
         <Row className="mb-3">
           <SearchString/>
         </Row>
@@ -26,17 +25,16 @@ export function SearchContainer(props) {
         <Row className="mb-3">
           <SearchDate/>
         </Row>
-        <Button onClick={() => dispatch(getNewsSearch())}>search</Button>
-      </Card.Body>
-    </Card>
+        <Button onClick={handleSearch}>Search</Button>
+    </>
   )
 }
-
-export default SearchContainer
 
 function SearchString() {
   let { searchString } = useSelector(selectSearch)
   const dispatch = useDispatch();
+  const handleSearchString = (event) => dispatch(setSearchString(event.target.value))
+
   return (
     <Form.Group controlId='searchString'>
       <Form.Label>Search</Form.Label>
@@ -44,7 +42,7 @@ function SearchString() {
         type="text"
         placeholder="Search..."
         value={searchString}
-        onChange={event => dispatch(setSearchString(event.target.value))} />
+        onChange={handleSearchString} />
     </Form.Group>
   );
 }
@@ -52,32 +50,30 @@ function SearchString() {
 function SearchSelectors() {
   let { searchTitle, searchSummary } = useSelector(selectSearch)
   const dispatch = useDispatch();
+  const handleSearchSelection = (title, summary) => {
+    dispatch(setSearchTitle(title));
+    dispatch(setSearchSummary(summary));
+  }
+
   return (
     <Form.Group>
       <Form.Check
         type="radio"
         checked={searchTitle && searchSummary}
-        onChange={() => {
-          dispatch(setSearchTitle(true));
-          dispatch(setSearchSummary(true));
-        } }
+        onChange={() => handleSearchSelection(true, true)}
         label="Search All" />
       <Form.Check
         type="radio"
         checked={searchTitle && !searchSummary}
-        onChange={() => {
-          dispatch(setSearchTitle(true));
-          dispatch(setSearchSummary(false));
-        } }
+        onChange={() => handleSearchSelection(true, false)}
         label="Search Title" />
       <Form.Check
         type="radio"
         checked={!searchTitle && searchSummary}
-        onChange={() => {
-          dispatch(setSearchTitle(false));
-          dispatch(setSearchSummary(true));
-        } }
+        onChange={() => handleSearchSelection(false, true)}
         label="Search Summary" />
     </Form.Group>
   );
 }
+
+export default SearchContainer
