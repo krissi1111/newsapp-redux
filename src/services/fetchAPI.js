@@ -4,14 +4,14 @@ const APIUrl = 'http://localhost:5000/'
 
 export const getToken = () => {
   let token = localStorage.getItem('token')
-  return token
+  return 'Bearer ' + token
 }
 
 export const fetcher = (method, URL, body, auth=false) => {
   let authHeader = ''
   if(auth) {
-    let token = getToken()
-    authHeader = 'Bearer ' + token
+    let tokenHeader = getToken()
+    authHeader = tokenHeader
   }
   return fetch(APIUrl+URL,{
     method: method,
@@ -43,12 +43,15 @@ export const News = {
   },
   getSearch: (form) => {
     return fetcher('POST', 'news/search', form)
+  },
+  getPopular: () => {
+    return fetcher('GET', 'news/popularComments')
   }
 }
 
 export const Comments = {
   getList: (form) => {
-    return fetcher('POST', 'comment/commentList', form, false)
+    return fetcher('POST', 'comment/commentList', form, true)
   },
   add: (form) => {
     return fetcher('POST', 'comment/addComment', form, true)
