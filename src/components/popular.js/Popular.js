@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Badge, Button, Col, Container, ListGroup, Row, Tab, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { getNewsPopular } from "../../redux/slices/newsDataSlice";
+import { setModalItem } from "../../redux/slices/newsModalSlice";
 
 
 
@@ -49,12 +50,15 @@ export function PopularContainer(props) {
 
 
 export function PopularItem(props) {
-  let { title, image, date, comments } = props.item;
+  let item = props.item
+  let { title, image, date, comments } = item;
+  const dispatch = useDispatch();
 
   return(
     <ListGroup.Item
       as="li"
       className="d-flex justify-content-between align-items-start"
+      onClick={() => dispatch(setModalItem(item))}
     >
       <div className="ms-2 me-auto">
         <div className="fw-bold">{title}</div>

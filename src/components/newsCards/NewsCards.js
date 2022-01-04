@@ -16,13 +16,14 @@ export function NewsCardContainer() {
 
   return (
       <Container fluid style={{ justifyContent: 'center', minHeight: '50rem', flexDirection: 'column', width:'100%'}}>
-        <NewsCardPages/>
+        <NewsCardPages style={{marginInline:'1%', justifyContent:'space-between'}}/>
         <NewsCardList newsData={newsData}/>
+        <NewsCardPages className='mt-3' style={{marginInline:'1%', justifyContent:'space-between'}}/>
       </Container>
   )
 }
 
-export function NewsCardPages() {
+export function NewsCardPages(props) {
   const newsDataState = useSelector((state) => state.newsCard)
   let { itemPerPage, pageCount, pageCurrent } = newsDataState
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ export function NewsCardPages() {
   let pageList = Array.from({length:pageCount},(v,k)=>k+1) 
 
   return(
-    <ButtonToolbar style={{marginInline:'1%', justifyContent:'space-between'}}>
+    <ButtonToolbar {...props}>
       <Pagination>
         {
           pageList.map(page => 

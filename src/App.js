@@ -7,6 +7,7 @@ import { loginToken } from './redux/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthModal } from './components/auth/AuthModal';
 import { PopularContainer } from './components/popular.js/Popular';
+import UserInfo from './components/auth/User';
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function App() {
             <Card>
               <Card.Body>
                 <PopularContainer/>
+                <UserInfo/>
               </Card.Body>
             </Card>
           </Col>

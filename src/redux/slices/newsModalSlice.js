@@ -11,7 +11,7 @@ export const newsModalSlice = createSlice({
   name: 'newsModal',
   initialState,
   reducers: {
-    setItem: (state, action) => {
+    setModalItem: (state, action) => {
       state.item = action.payload
       state.status = 'loaded'
       state.show = true
@@ -22,6 +22,6 @@ export const newsModalSlice = createSlice({
   },
 })
 
-export const { setItem, showModal } = newsModalSlice.actions
+export const { setModalItem, showModal } = newsModalSlice.actions
 
 export default newsModalSlice.reducer;

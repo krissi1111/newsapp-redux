@@ -46,6 +46,9 @@ export const News = {
   },
   getPopular: () => {
     return fetcher('GET', 'news/popularComments')
+  },
+  addNews: () => {
+    return fetcher('GET', 'news/addNews', null, true)
   }
 }
 

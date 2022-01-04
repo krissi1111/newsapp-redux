@@ -7,6 +7,7 @@ import { CommentContainer } from "../comments/Comments";
 export function NewsModal(props) {
   const dispatch = useDispatch();
   const modalValues = useSelector((state) => state.newsModal)
+  const user = useSelector((state) => state.auth.user)
   let { show, item, status } = modalValues
   let { id, title, summary, link, image, date, origin } = item
   let modalTitle = origin + ' - ' + new Date(date).toLocaleString('en-UK')
@@ -47,7 +48,7 @@ export function NewsModal(props) {
           <Modal.Footer style={{display:'flex', justifyContent: 'space-between'}}>
             <Button variant="outline-primary">favButtonText</Button>
             <ButtonGroup style={{ display:'flex', alignItems:'center'}}>
-              <Button >Delete</Button>
+              {user.userType === 'Admin' ?(<Button >Delete</Button>) : (<></>)}
               <Button href={link} variant="outline-primary">Visit site</Button>{' '}
               <Button onClick={handleClose}>Close</Button>
             </ButtonGroup>

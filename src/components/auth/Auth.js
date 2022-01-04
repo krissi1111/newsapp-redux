@@ -1,12 +1,12 @@
 import { Tab, Tabs } from 'react-bootstrap';
-import Login from './Login';
+import Login, { LoginTest } from './Login';
 import Register from './Register';
 
 
 export function AuthContainer(props) {
 
   return(
-    <Tabs 
+    /*<Tabs 
       fill
       variant='pills'
       defaultActiveKey='Login' 
@@ -15,12 +15,13 @@ export function AuthContainer(props) {
       style={{flexDirection:'row'}}
     >
       <Tab eventKey='Login' title='Login'>
-        <Login/>
+        <LoginTest/>
       </Tab>
       <Tab eventKey='Register' title='Register'>
         <Register/>
       </Tab>
-    </Tabs>
+    </Tabs>*/
+    <LoginTest/>
   )
 }
 

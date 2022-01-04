@@ -41,6 +41,14 @@ export const getNewsPopular = createAsyncThunk(
   }
 )
 
+export const addNews = createAsyncThunk(
+  'news/addNews',
+  async(arg) => {
+    const response = await News.addNews()
+    return response.json()
+  }
+)
+
 function searchForm(values) {
   const { searchString, searchTitle, searchSummary, searchDate, dateRange } = values
   const form = new FormData()
@@ -112,6 +120,9 @@ export const newsDataSlice = createSlice({
         state.newsDataPopularCom = comments
         state.newsDataPopularFav = favorites
         state.favStatus = true
+      })
+      .addCase(addNews.fulfilled, (state, action) => {
+        console.log(action.payload)
       });
   }
 })

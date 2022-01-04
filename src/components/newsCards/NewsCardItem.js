@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Card, Toast } from "react-bootstrap";
 import { useDispatch } from 'react-redux';
-import {setItem} from '../../redux/slices/newsModalSlice'
+import {setModalItem} from '../../redux/slices/newsModalSlice'
 import { Waypoint } from 'react-waypoint';
 import { useState } from "react";
 
@@ -43,7 +43,7 @@ export function NewsCardItem(props) {
         <Card.Footer style={{ backgroundColor: 'white' }}>
           <ButtonGroup style={{ display: 'flex', alignItems: 'center' }}>
             <Button href={link} variant="outline-primary">Visit site</Button>{' '}
-            <Button onClick={() => dispatch(setItem(props.newsItem))}>Modal</Button>
+            <Button onClick={() => dispatch(setModalItem(props.newsItem))}>View</Button>
           </ButtonGroup>
         </Card.Footer>
       </Card>

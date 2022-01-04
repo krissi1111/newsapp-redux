@@ -6,10 +6,12 @@ const initialState = {
   user: {
     username: 'Guest',
     firstName: 'Guest',
-    lastName: 'Guest'
+    lastName: 'Guest',
+    userType: 'Guest'
   },
   loggedIn: false,
-  showModal: false
+  showModal: false,
+  showUserModal: false
 }
 
 export const loginToken = createAsyncThunk(
@@ -55,6 +57,9 @@ export const authSlice = createSlice({
     },
     showAuthModal: (state) => {
       state.showModal = !state.showModal
+    },
+    setShowUserModal: (state) => {
+      state.showUserModal = !state.showUserModal
     }
   },
   extraReducers: (builder) => {
@@ -72,7 +77,7 @@ export const authSlice = createSlice({
   }
 })
 
-export const { logout, showAuthModal } = authSlice.actions
+export const { logout, showAuthModal, setShowUserModal } = authSlice.actions
 
 export const selectAuth = (state) => state.auth
 

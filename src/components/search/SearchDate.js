@@ -31,9 +31,20 @@ export function SearchDate() {
   function handleDateRange(dates){
     setDateRangeValue(dates)
     if(dates[1] !== null) {
-      let dateStart = dates[0].toISOString()
-      let dateEnd = dates[1].toISOString()
-      dispatch(setDateRange([dateStart, dateEnd]))
+      let dateStart = dates[0]//.toISOString()
+      let dateEnd = dates[1]//.toISOString()
+      
+      let dateStartAdjusted = dateStart
+      dateStartAdjusted.setHours(0)
+      dateStartAdjusted.setMinutes(0)
+
+      let dateEndAdjusted = dateEnd
+      //if(dateEndAdjusted.getFullYear() === 1970) dateEndAdjusted = new Date(dateStart)
+      dateEndAdjusted.setHours(23)
+      dateEndAdjusted.setMinutes(59)
+      dateEndAdjusted.setSeconds(0)
+
+      dispatch(setDateRange([dateStartAdjusted.toISOString(), dateEndAdjusted.toISOString()]))
     }
   }
 

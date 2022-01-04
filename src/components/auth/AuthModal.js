@@ -1,13 +1,15 @@
 import { Button, Modal, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAuth, showAuthModal, logout } from "../../redux/slices/authSlice";
+import { selectAuth, showAuthModal, setShowUserModal, logout } from "../../redux/slices/authSlice";
 import AuthContainer from "./Auth";
+import { UserContainer } from "./User";
 
 
 export function AuthModal() {
   let { loggedIn, showModal, user } = useSelector(selectAuth)
   const dispatch = useDispatch();
   const handleShowModal = () => dispatch(showAuthModal())
+  const handleShowUserModal = () => dispatch(setShowUserModal())
   const handleLogOut = () => dispatch(logout())
 
   return(
@@ -24,6 +26,7 @@ export function AuthModal() {
             className="mx-2 my-0" 
             variant="outline-light" 
             size="sm"
+            onClick={handleShowUserModal}
           > 
             {user.firstName + ' ' + user.lastName}
           </Button>
@@ -52,6 +55,7 @@ export function AuthModal() {
           <AuthContainer/>
         </Modal.Body>
       </Modal>
+      <UserContainer/>
     </>
   )
 }

@@ -27,7 +27,6 @@ export function Register(props) {
     form.append('LastName', lastName)
     form.append('Password', password)
     form.append('UserType', userType)
-    console.log(form)
     dispatch(register(form))
   }
  
