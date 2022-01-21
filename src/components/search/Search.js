@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import { Button, Card, Form, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { getNewsSearch } from "../../redux/slices/newsDataSlice";
@@ -25,7 +26,9 @@ export function SearchContainer(props) {
         <Row className="mb-3">
           <SearchDate/>
         </Row>
-        <Button onClick={handleSearch}>Search</Button>
+        <Button onClick={handleSearch}>
+          <Icon inline={true} icon='ant-design:file-search-outlined'/> Search
+        </Button>
     </>
   )
 }

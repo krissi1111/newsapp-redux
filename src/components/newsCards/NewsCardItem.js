@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import {setModalItem} from '../../redux/slices/newsModalSlice'
 import { Waypoint } from 'react-waypoint';
 import { useState } from "react";
+import { Icon } from '@iconify/react';
 
 export function NewsCardItem(props) {
   let { title, summary, link, image, date, origin } = props.newsItem;
@@ -10,9 +11,11 @@ export function NewsCardItem(props) {
   let [imgSource, setImageSource] = useState('')
 
   const summaryLength = 150;
-  if (summary.length > summaryLength)
-    summary = summary.substring(0, summaryLength) + "...";
-  date = new Date(date).toLocaleString('en-UK');
+  if (summary.length > summaryLength) summary = summary.substring(0, summaryLength) + "...";
+  
+  let dateOptions = {timeStyle: "short", dateStyle: "short"}
+  date = new Date(date).toLocaleString('is', dateOptions);
+
   return (
     <Waypoint 
       onEnter={() => setImageSource(image)}
@@ -33,17 +36,18 @@ export function NewsCardItem(props) {
         <Card.Body>
           <Card.Title>{title}</Card.Title>
           <Card.Subtitle className="mb-2 text-muted">
-            {date}
+            <Icon inline={true} icon='mdi:calendar-month'/> {date}
           </Card.Subtitle>
           <Card.Subtitle className="mb-2 text-muted">
-            {origin}
+            <Icon inline={true} icon='bytesize:home'/> <a className="mb-2 text-muted" href={link}>{origin}</a>
           </Card.Subtitle>
+          
           <Card.Text>{summary}</Card.Text>
         </Card.Body>
         <Card.Footer style={{ backgroundColor: 'white' }}>
           <ButtonGroup style={{ display: 'flex', alignItems: 'center' }}>
-            <Button href={link} variant="outline-primary">Visit site</Button>{' '}
-            <Button onClick={() => dispatch(setModalItem(props.newsItem))}>View</Button>
+            {/*<Button href={link} variant="outline-primary">Visit site</Button>{' '}*/}
+            <Button variant="outline-primary" onClick={() => dispatch(setModalItem(props.newsItem))}>View article</Button>
           </ButtonGroup>
         </Card.Footer>
       </Card>

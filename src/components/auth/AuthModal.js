@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import { Button, Modal, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, showAuthModal, setShowUserModal, logout } from "../../redux/slices/authSlice";
@@ -46,7 +47,7 @@ export function AuthModal() {
         variant="outline-light" 
         onClick={handleLogOut}
       >
-        Log Out
+        <Icon inline={true} icon='ci:log-out'/> Log Out
       </Button>
       )}
       <Modal show={showModal} onHide={handleShowModal} centered>
