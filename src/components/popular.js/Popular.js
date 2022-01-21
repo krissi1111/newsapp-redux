@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { Badge, Button, Col, Container, ListGroup, Row, Tab, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,14 +32,14 @@ export function PopularContainer(props) {
       <Tab eventKey='com' title='Most Commented'>
         <ListGroup as="ol" numbered className="">
           {topNewsByComments.map(item => (
-            <PopularItem item={item}/>
+            <PopularItem key={item.link} item={item}/>
           ))}
         </ListGroup>
       </Tab>
       <Tab eventKey='fav' title='Most Favorited'>
       <ListGroup as="ol" numbered>
           {topNewsByFavorites.map(item => (
-            <PopularItem item={item}/>
+            <PopularItem key={item.link} item={item}/>
           ))}
         </ListGroup>
       </Tab>
@@ -51,7 +52,8 @@ export function PopularContainer(props) {
 
 export function PopularItem(props) {
   let item = props.item
-  let { title, image, date, comments } = item;
+  let { title, date, comments } = item;
+  date = new Date(date).toLocaleString('isl', {timeStyle: "short", dateStyle: "short"})
   const dispatch = useDispatch();
 
   return(
@@ -62,7 +64,7 @@ export function PopularItem(props) {
     >
       <div className="ms-2 me-auto">
         <div className="fw-bold">{title}</div>
-        {new Date(date).toLocaleString('en-UK')}
+        <Icon inline={true} icon='mdi:calendar-month'/> {date}
       </div>
       <Badge bg="secondary" pill>
         {comments}
