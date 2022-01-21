@@ -3,11 +3,11 @@ import { News } from '../../services/fetchAPI';
 
 
 const initialState = {
-  searchString: '',
+  searchString: ' ',
   searchTitle: true,
   searchSummary: true,
   searchDate: false,
-  dateRange: [0, 0]
+  dateRange: [new Date().toISOString(), new Date().toISOString()]
 };
 
 export const getNewsSearch = createAsyncThunk(
