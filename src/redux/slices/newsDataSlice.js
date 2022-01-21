@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { News } from '../../services/fetchAPI';
+import { News, Favorite } from '../../services/fetchAPI';
 
 const initialState = {
   newsData: [],
@@ -12,7 +12,7 @@ const initialState = {
   pageCurrent: 0,
   pageCount: 10,
   itemPerPage: 10,
-  status: 'idle',
+  newsStatus: 'idle',
   favStatus: false
 };
 
@@ -49,11 +49,23 @@ export const addNews = createAsyncThunk(
   }
 )
 
+export const favAddRemove = createAsyncThunk(
+  'news/favAddRemove',
+  async(arg) => {
+    const form = new FormData()
+    form.append('newsId', arg.newsId)
+    const response = await Favorite.addRemove(form)
+    return response.status
+  }
+)
+
 function searchForm(values) {
   const { searchString, searchTitle, searchSummary, searchDate, dateRange } = values
   const form = new FormData()
     if(searchTitle) form.append('title', searchString)
+    else form.append('title', ' ')
     if(searchSummary) form.append('summary', searchString)
+    else form.append('summary', ' ')
     if(searchDate) {
       form.append('dateStart', dateRange[0])
       form.append('dateEnd', dateRange[1])
@@ -90,10 +102,10 @@ export const newsDataSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getNewsAll.pending, (state) => {
-        state.status = 'loading';
+        state.newsStatus = 'loading';
       })
       .addCase(getNewsAll.fulfilled, (state, action) => {
-        state.status = 'loaded';
+        state.newsStatus = 'loaded';
         let news = action.payload
         state.newsData = news;
         state.pageCurrent = 0
@@ -103,10 +115,10 @@ export const newsDataSlice = createSlice({
         newsDataSlice.caseReducers.setNewsDataView(state)
       })
       .addCase(getNewsSearch.pending, (state) => {
-        state.status = 'loading';
+        state.newsStatus = 'loading';
       })
       .addCase(getNewsSearch.fulfilled, (state, action) => {
-        state.status = 'loaded';
+        state.newsStatus = 'loaded';
         let news = action.payload
         state.newsData = news;
         state.pageCurrent = 0
