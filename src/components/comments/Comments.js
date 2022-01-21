@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Accordion, Badge, Button, Card, Form, InputGroup, useAccordionButton } from "react-bootstrap"
+import { Accordion, Button, ButtonGroup, Card, Form, InputGroup, useAccordionButton } from "react-bootstrap"
 import { useSelector, useDispatch } from 'react-redux';
-import { getComments, unloadComments, addComment } from "../../redux/slices/commentSlice";
+import { getComments, unloadComments, addComment, addReply, editComment, deleteComment, deleteReply, editReply } from "../../redux/slices/commentSlice";
+import { Icon } from '@iconify/react';
+import { selectUser } from "../../redux/slices/authSlice";
 
 export function CommentContainer(props) {
   const dispatch = useDispatch();
@@ -24,13 +26,8 @@ export function CommentContainer(props) {
     <Accordion>
       <Accordion.Item eventKey='0'>
         <Accordion.Header>
-          Comments
-          <Badge
-            bg='secondary'
-            style={{marginLeft:'0.2rem'}}
-          >
-            {comments.length}
-          </Badge>
+          <Icon inline={true} className="mx-1" icon='mdi:comment-outline'/>
+           {comments.length} Comments
         </Accordion.Header>
         <Accordion.Collapse eventKey='0'>
           <>
@@ -46,82 +43,93 @@ export function CommentContainer(props) {
 export function CommentList(props) {
   let commentItems = props.comments
   let commentType = props.type
+  let newsId = props.newsId
+  let commentId = props.commentId || -1
 
   return(
     <>
-      {commentType === null ?(
-        <></>
-      ) : (
-      <CommentInput type={commentType} newsId={props.newsId}/>
-      )}
-      {!commentItems || commentItems.length === 0 ?(
-        <></>
-      ) : (
-        commentItems.map(item => {
-          return(
-          <CommentItem key={item.text} item={item} type={commentType}/>
-          )
-        })
-      )}
+      <CommentInput type={commentType} newsId={newsId} commentId={commentId}/>
+      {commentItems.map(item => {
+        return(
+        <CommentItem key={item.text} item={item} type={commentType} newsId={newsId}/>
+        )
+      })
+      }
     </>
   )
 }
 
 export function CommentItem(props) {
   const { item, newsId, type } = props;
-  let { id, userFullName, text, date, replies, isOwner } = item
-  date = new Date(date).toLocaleString('en-UK')
-  let replyLength = 0
-  if(replies !== null) replyLength = replies.length
+  let { id, userId, userFullName, text, date, replies } = item
+  let currentUser = useSelector(selectUser)
+  let isOwner = (userId === currentUser.id) || (currentUser.userType === 'Admin')
+  date = new Date(date).toLocaleString('is', {timeStyle: "short", dateStyle: "short"})
+
+  const dispatch = useDispatch();
+  const handleDelete = () => {
+    if(type === 'Comment') dispatch(deleteComment({ commentId: id }))
+    else if(type === 'Reply') dispatch(deleteReply({ replyId: id }))
+  }
 
   return(
-    <Card className='mb-0 mt-0' style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-      <Card.Body >
-        <Card.Title style={{ justifyContent: "space-between", display: "flex", margin: "0rem", alignItems: 'center' }}>
+    <Card>
+      <Card.Body>
+        <Card.Title className="d-flex justify-content-between my-0 align-items-center">
           <Card.Text className="mb-2">
             {userFullName}
           </Card.Text>
-          <Card.Subtitle className="mb-2 text-muted">{date}</Card.Subtitle>
+          <Card.Subtitle className="mb-2 text-muted">
+            {date}
+          </Card.Subtitle>
         </Card.Title>
         <Card.Text>
           {text}
         </Card.Text>
-        
         <Accordion>
-          {type === 'Reply' ?(
-            <></>
-          ) : (
-          <ToggleButton eventKey='0'>
-            Replies
-            <Badge
-              bg='light'
-              pill
-              text='secondary'
-            >
-              {replyLength}
-            </Badge>
-          </ToggleButton>
-          )}
-          {!isOwner ?(
-            <></>
-          ) : (
-            <>
-              <ToggleButton eventKey='1'>
-                Edit...
-              </ToggleButton>
-              <Button
-                variant='link'
-                size='sm'
-              >
-                Delete
-              </Button>
-            </>
-          )}
+          <ButtonGroup>
+            {type === 'Comment' ? (
+            <ToggleButton eventKey='0'>
+              <Icon inline={true} className="mx-1" icon='mdi:comment-outline'/>
+              {replies.length} Replies
+            </ToggleButton>
+            ) : (<></>)
+            }
+            {!isOwner ? (
+              <></>
+              ) : (
+              <>
+                <ToggleButton eventKey='1'>
+                  <Icon inline={true} className="mx-1" icon='mdi:comment-edit-outline'/>
+                  Edit
+                </ToggleButton>
+                <Button
+                  variant='light'
+                  size='sm'
+                  onClick={handleDelete}
+                  style={{backgroundColor: 'white'}}
+                >
+                  <Icon inline={true} className="mx-1" icon='mdi:comment-remove-outline'/>
+                  Delete
+                </Button>
+              </>
+              )
+            }
+          </ButtonGroup>
           <Accordion.Collapse eventKey='0'>
-            <CommentList comments={replies} type={type !== 'Reply' ?('Reply'):(null)}/>
+            <CommentList 
+              comments={replies} 
+              type='Reply'
+              newsId={newsId}
+              commentId={id}
+            />
           </Accordion.Collapse>
           <Accordion.Collapse eventKey='1'>
-            <CommentInput type='CommentEdit' editText={text}/>
+            {type === 'Comment' ? (
+              <CommentInput type='CommentEdit' id={id} editText={text}/>
+            ) : (
+              <CommentInput type='ReplyEdit' id={id} editText={text}/>
+            )}
           </Accordion.Collapse>
         </Accordion>
       </Card.Body>
@@ -135,18 +143,24 @@ export function CommentInput(props) {
   const types = {
     Comment: {
       placeholder: 'Add new comment',
-      click: () => dispatch(addComment({newsId: props.newsId, commentText: commentText})),
+      click: () => dispatch(addComment({newsId: props.newsId, text: commentText})),
       buttonText: 'Comment'   
     },
     Reply: {
       placeholder: 'Add new reply',
-      click: () => console.log(commentText),
+      click: () => dispatch(addReply({newsId: props.newsId, text: commentText, commentId: props.commentId})),
       buttonText: 'Reply'
     },
     CommentEdit: {
       placeholder: 'Edit comment',
       value: props.editText,
-      click: () => console.log(commentType),
+      click: () => dispatch(editComment({text: commentText, commentId: props.id})),
+      buttonText: 'Edit'
+    },
+    ReplyEdit: {
+      placeholder: 'Edit reply',
+      value: props.editText,
+      click: () => dispatch(editReply({text: commentText, replyId: props.id})),
       buttonText: 'Edit'
     }
   }
@@ -173,11 +187,15 @@ function ToggleButton({ children, eventKey }) {
 
   return(
     <Button
-      variant='link'
+      variant='light'
       size='sm'
       onClick={decoratedOnClick}
+      style={{backgroundColor: 'white'}}
     >
       {children}
     </Button>
   )
 }
+
+
+
