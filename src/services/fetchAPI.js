@@ -48,7 +48,7 @@ export const News = {
     return fetcher('GET', 'news/popularComments')
   },
   addNews: () => {
-    return fetcher('GET', 'news/addNews', null, true)
+    return fetcher('GET', 'news/add', null, true)
   }
 }
 
@@ -62,8 +62,35 @@ export const Comments = {
   delete: (form) => {
     return fetcher('POST', 'comment/deleteComment', form, true)
   },
+  deleteReply: (form) => {
+    return fetcher('POST', 'comment/deleteReply', form, true)
+  },
   edit: (form) => {
     return fetcher('PATCH', 'comment/editComment', form, true)
+  },
+  editReply: (form) => {
+    return fetcher('PATCH', 'comment/editReply', form, true)
+  }
+}
+
+export const Reply = {
+  add: (form) => {
+    return fetcher('POST', 'comment/addReply', form, true)
+  },
+  delete: (form) => {
+    return fetcher('POST', 'comment/deleteReply', form, true)
+  },
+  edit: (form) => {
+    return fetcher('PATCH', 'comment/editReply', form, true)
+  }
+}
+
+export const Favorite = {
+  addRemove: (form) => {
+    return fetcher('POST', 'news/favAddRemove', form, true)
+  },
+  userFavs: () => {
+    return fetcher('GET', 'news/userFav', null, true)
   }
 }
 
