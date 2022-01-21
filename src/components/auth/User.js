@@ -18,7 +18,9 @@ export function UserContainer(props) {
         User info
       </Modal.Header>
       <Modal.Body>
-        <UserInfo className='w-25'/>
+        <div className="d-flex flex-row">
+          <UserInfo className='w-25'/>
+        </div>
         <Tabs
           fill
           variant='pills'
@@ -26,12 +28,6 @@ export function UserContainer(props) {
           id='User-tab' 
           style={{flexDirection:'row'}}
         >
-          <Tab
-            eventKey='0'
-            title='User Info'
-          >
-            <PopularContainer/>
-          </Tab>
           {user.userType === 'Admin' ?(
           <Tab
             eventKey='1'
