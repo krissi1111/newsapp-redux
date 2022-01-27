@@ -1,7 +1,6 @@
-import { Button, Card, Col, Form, Modal, Row, Tab, Tabs } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowUserModal } from "../../redux/slices/authSlice";
-import { PopularContainer } from "../popular.js/Popular";
 import { addNews } from "../../redux/slices/newsDataSlice";
 
 
@@ -21,23 +20,10 @@ export function UserContainer(props) {
         <div className="d-flex flex-row">
           <UserInfo className='w-25'/>
         </div>
-        <Tabs
-          fill
-          variant='pills'
-          defaultActiveKey='0' 
-          id='User-tab' 
-          style={{flexDirection:'row'}}
-        >
-          {user.userType === 'Admin' ?(
-          <Tab
-            eventKey='1'
-            title='User Info'
-          >
-            <Button onClick={() => dispatch(addNews())}>Add news</Button>
-          </Tab>
-          ) : (<></>)
-          }
-        </Tabs>
+        {user.userType === 'Admin' ?(
+          <Button onClick={() => dispatch(addNews())}>Add news</Button>
+        ) : (<></>)
+        }
       </Modal.Body>
     </Modal>
   )
