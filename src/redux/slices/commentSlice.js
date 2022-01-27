@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Comments, Reply } from '../../services/fetchAPI';
+import { getNewsPopular } from './newsDataSlice';
 
 const initialState = {
   commentData: [],
@@ -24,6 +25,7 @@ export const addComment = createAsyncThunk(
     form.append('commentText', arg.text)
     const response = await Comments.add(form)
     dispatch(getComments(arg.newsId))
+    dispatch(getNewsPopular())
     return response.json()
   }
 )
@@ -49,6 +51,7 @@ export const deleteComment = createAsyncThunk(
     const response = await Comments.delete(form)
     let newsId =  getState().newsModal.item.id
     dispatch(getComments(newsId))
+    dispatch(getNewsPopular())
     return response.json()
   }
 )
@@ -61,6 +64,7 @@ export const deleteReply = createAsyncThunk(
     const response = await Comments.deleteReply(form)
     let newsId = getState().newsModal.item.id
     dispatch(getComments(newsId))
+    dispatch(getNewsPopular())
     return response.json()
   }
 )
