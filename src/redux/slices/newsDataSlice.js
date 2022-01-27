@@ -145,7 +145,11 @@ export const newsDataSlice = createSlice({
         state.newsDataPopularFav = favorites
         state.favStatus = true
       })
+      .addCase(addNews.pending, (state, action) => {
+        state.newsStatus = 'loading';
+      })
       .addCase(addNews.fulfilled, (state, action) => {
+        state.newsStatus = 'loaded';
         console.log(action.payload)
       });
   }
