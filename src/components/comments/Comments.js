@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Accordion, Button, ButtonGroup, Card, Form, InputGroup, useAccordionButton } from "react-bootstrap"
+import { Accordion, Button, ButtonGroup, Card, Form, InputGroup, OverlayTrigger, Tooltip, useAccordionButton } from "react-bootstrap"
 import { useSelector, useDispatch } from 'react-redux';
 import { getComments, unloadComments, addComment, addReply, editComment, deleteComment, deleteReply, editReply } from "../../redux/slices/commentSlice";
 import { Icon } from '@iconify/react';
-import { selectUser } from "../../redux/slices/authSlice";
+import { selectLoggedIn, selectUser } from "../../redux/slices/authSlice";
 
 export function CommentContainer(props) {
   const dispatch = useDispatch();
@@ -168,6 +168,13 @@ export function CommentInput(props) {
   let commentType = props.type
   let type = types[commentType]
   const [commentText, setCommentText] = useState(type.value)
+  const loggedIn = useSelector(selectLoggedIn)
+
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Sign in to comment
+    </Tooltip>
+  );
   
   return(
       <InputGroup>
@@ -177,7 +184,14 @@ export function CommentInput(props) {
           value={commentText}
           onChange={event => setCommentText(event.target.value)}
         />
-        <Button variant='outline-secondary' onClick={type.click}>{type.buttonText}</Button>
+        <OverlayTrigger
+          placement="right"
+          delay={{ show: 250, hide: 400 }}
+          overlay={renderTooltip}
+          trigger={loggedIn?([]):(['hover', 'focus'])}
+        >
+          <Button variant='outline-secondary' onClick={type.click}>{type.buttonText}</Button>
+        </OverlayTrigger>
       </InputGroup>
   )
 }
