@@ -6,6 +6,7 @@ import { favAddRemove } from "../../redux/slices/authSlice";
 import { showModal } from "../../redux/slices/newsModalSlice";
 import { CommentContainer } from "../comments/Comments";
 import { Icon } from '@iconify/react';
+import { deleteNews } from "../../redux/slices/newsDataSlice";
 
 
 export function NewsModal(props) {
@@ -23,6 +24,10 @@ export function NewsModal(props) {
 
   const handleClose = () => dispatch(showModal(false))
   const handleFav = () => dispatch(favAddRemove({ newsId: id}))
+  const handleDelete = () => {
+    dispatch(deleteNews({ newsId: id}))
+    dispatch(showModal(false))
+  }
 
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
@@ -90,7 +95,7 @@ export function NewsModal(props) {
             <ButtonGroup style={{ display:'flex', alignItems:'center'}}>
               {
                 user.userType === 'Admin' ?(
-                  <Button >Delete</Button>
+                  <Button onClick={handleDelete}>Delete</Button>
                 ) : (
                   <></>
                 )

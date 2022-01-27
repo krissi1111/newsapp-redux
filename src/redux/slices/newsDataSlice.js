@@ -49,12 +49,24 @@ export const addNews = createAsyncThunk(
   }
 )
 
+export const deleteNews = createAsyncThunk(
+  'news/deleteNews',
+  async(arg, {dispatch}) => {
+    const form = new FormData()
+    form.append('newsId', arg.newsId)
+    await News.delete(form)
+    dispatch(getNewsSearch())
+    dispatch(getNewsPopular())
+  }
+)
+
 export const favAddRemove = createAsyncThunk(
   'news/favAddRemove',
-  async(arg) => {
+  async(arg, {dispatch}) => {
     const form = new FormData()
     form.append('newsId', arg.newsId)
     const response = await Favorite.addRemove(form)
+    dispatch(getNewsPopular())
     return response.status
   }
 )
