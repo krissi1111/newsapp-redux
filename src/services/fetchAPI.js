@@ -1,6 +1,6 @@
 
-
-const APIUrl = 'http://localhost:5000/'
+const port = process.env.REACT_APP_BACKEND_PORT
+const APIUrl = 'http://127.0.0.1:'+port+'/'
 
 export const getToken = () => {
   let token = localStorage.getItem('token')
@@ -49,12 +49,15 @@ export const News = {
   },
   addNews: () => {
     return fetcher('GET', 'news/add', null, true)
+  },
+  delete: (form) => {
+    return fetcher('POST', 'news/delete', form, true)
   }
 }
 
 export const Comments = {
   getList: (form) => {
-    return fetcher('POST', 'comment/commentList', form, true)
+    return fetcher('POST', 'news/commentList', form, true)
   },
   add: (form) => {
     return fetcher('POST', 'comment/addComment', form, true)
