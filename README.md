@@ -1,13 +1,14 @@
 
-This is the frontend of my newsapp project
+This is the frontend of my newsapp project. 
+It is meant to be run in conjunction with the backend at [https://github.com/krissi1111/NewsAppNet]bla
 
-
+docker-compose.yml
 ```
 
 version: '3.4'
 
 volumes:
-    news7:    
+    news:    
 
 services:
     newsappdb:
@@ -18,19 +19,19 @@ services:
         ports:
             - 1433:1433
         volumes:
-            - news7:/var/opt/mssql
+            - news:/var/opt/mssql
 
     newsappnet:
-        image: newsappnet:test
+        image: stjani11/newsapp_backend:latest
         depends_on:
             - newsappdb
         ports:
             - 5000:80
 
-    frontend:
-        image: newsapp-redux
+    newsapp-redux:
+        image: stjani11/newsapp_frontend:latest
         ports:
-            - 3001:3000
+            - 3000:3000
         environment:
             - CHOKIDAR_USEPOLLING=true
             - REACT_APP_BACKEND_PORT=5000
