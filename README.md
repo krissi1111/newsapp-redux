@@ -1,3 +1,43 @@
+
+This is the frontend of my newsapp project
+
+
+```
+
+version: '3.4'
+
+volumes:
+    news7:    
+
+services:
+    newsappdb:
+        image: "mcr.microsoft.com/mssql/server:2019-latest"
+        environment:
+            ACCEPT_EULA: Y
+            SA_PASSWORD: Password123
+        ports:
+            - 1433:1433
+        volumes:
+            - news7:/var/opt/mssql
+
+    newsappnet:
+        image: newsappnet:test
+        depends_on:
+            - newsappdb
+        ports:
+            - 5000:80
+
+    frontend:
+        image: newsapp-redux
+        ports:
+            - 3001:3000
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - REACT_APP_BACKEND_PORT=5000
+```
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
