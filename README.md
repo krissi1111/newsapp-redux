@@ -1,6 +1,10 @@
 
-This is the frontend of my newsapp project. 
-It is meant to be run in conjunction with the backend at [bla](https://github.com/krissi1111/NewsAppNet)
+This is the frontend of my newsapp project. <br />
+It is meant to be run in conjunction with the backend [here](https://github.com/krissi1111/NewsAppNet)
+
+The project is set up to run using Docker and can be run using the docker-compose.yml file seen below.
+
+
 
 docker-compose.yml
 ```
