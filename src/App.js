@@ -9,6 +9,7 @@ import { AuthModal } from './components/auth/AuthModal';
 import { PopularContainer } from './components/popular.js/Popular';
 import UserInfo from './components/auth/User';
 import { addNews } from './redux/slices/newsDataSlice';
+import { ErrorModal } from './components/error/errorModal';
 
 function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function App() {
           </Col>
         </Row>
       </Container>
+      <ErrorModal/>
     </>
   );
 }
