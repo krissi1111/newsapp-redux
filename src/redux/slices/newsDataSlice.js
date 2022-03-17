@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { News, Favorite } from '../../services/fetchAPI';
+import { News } from '../../services/fetchAPI';
+import { showErrorModal } from './errorSlice';
 
 const initialState = {
   newsData: [],
@@ -18,48 +19,81 @@ const initialState = {
 
 export const getNewsAll = createAsyncThunk(
   'news/getNewsAll',
-  async() => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await News.getAll()
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const getNewsSearch = createAsyncThunk(
   'news/getNewsSearch',
-  async(arg, {getState}) => {
+  async(arg, { getState, rejectWithValue, fulfillWithValue, dispatch}) => {
     const form = searchForm(getState().search)
     const response = await News.getSearch(form)
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const getNewsPopular = createAsyncThunk(
   'news/getNewsPopular',
-  async(arg) => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await News.getPopular()
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const addNews = createAsyncThunk(
   'news/addNews',
-  async(arg) => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await News.addNews()
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const deleteNews = createAsyncThunk(
   'news/deleteNews',
-  async(arg, {dispatch}) => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch}) => {
     const form = new FormData()
     form.append('newsId', arg.newsId)
-    await News.delete(form)
-    dispatch(getNewsSearch())
-    dispatch(getNewsPopular())
+    const response = await News.delete(form)
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => {
+      dispatch(getNewsSearch())
+      dispatch(getNewsPopular())
+      return fulfillWithValue(res)
+    })
   }
 )
-
+/*
 export const favAddRemove = createAsyncThunk(
   'news/favAddRemove',
   async(arg, {dispatch}) => {
@@ -70,18 +104,34 @@ export const favAddRemove = createAsyncThunk(
     return response.status
   }
 )
-
+*/
 function searchForm(values) {
-  const { searchString, searchTitle, searchSummary, searchDate, dateRange } = values
+  const { 
+    searchString, 
+    searchTitle, 
+    searchSummary, 
+    searchDate, 
+    dateRange, 
+    searchFeeds,
+    searchFeedsSelected } = values
   const form = new FormData()
     if(searchTitle) form.append('title', searchString)
     else form.append('title', ' ')
+
     if(searchSummary) form.append('summary', searchString)
     else form.append('summary', ' ')
+
     if(searchDate) {
       form.append('dateStart', dateRange[0])
       form.append('dateEnd', dateRange[1])
     }
+    if(searchFeeds){
+      let feeds = searchFeedsSelected
+      feeds.map(id => (
+        form.append('newsFeedIds', id)
+      ))
+    }
+
   return form
 }
 
@@ -118,7 +168,7 @@ export const newsDataSlice = createSlice({
       })
       .addCase(getNewsAll.fulfilled, (state, action) => {
         state.newsStatus = 'loaded';
-        let news = action.payload
+        let news = action.payload.data
         state.newsData = news;
         state.pageCurrent = 0
         let length = Math.min(state.newsData.length, state.newsDataMaxLength)
@@ -131,7 +181,7 @@ export const newsDataSlice = createSlice({
       })
       .addCase(getNewsSearch.fulfilled, (state, action) => {
         state.newsStatus = 'loaded';
-        let news = action.payload
+        let news = action.payload.data
         state.newsData = news;
         state.pageCurrent = 0
         let length = Math.min(state.newsData.length, state.newsDataMaxLength)
@@ -140,7 +190,7 @@ export const newsDataSlice = createSlice({
         newsDataSlice.caseReducers.setNewsDataView(state)
       })
       .addCase(getNewsPopular.fulfilled, (state, action) => {
-        let {comments, favorites} = action.payload
+        let {comments, favorites} = action.payload.data
         state.newsDataPopularCom = comments
         state.newsDataPopularFav = favorites
         state.favStatus = true
@@ -150,7 +200,7 @@ export const newsDataSlice = createSlice({
       })
       .addCase(addNews.fulfilled, (state, action) => {
         state.newsStatus = 'loaded';
-        console.log(action.payload)
+        console.log(action.payload.data)
       });
   }
 })

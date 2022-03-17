@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Auth, Favorite } from '../../services/fetchAPI';
+import { showErrorModal } from './errorSlice';
 
 
 const initialState = {
@@ -19,51 +20,77 @@ const initialState = {
 
 export const loginToken = createAsyncThunk(
   'auth/loginToken',
-  async(arg, { rejectWithValue }) => {
-    try {
-      const response = await Auth.status()
-      if (!response.ok) {
-        return rejectWithValue(response.status)
+  async(arg, { rejectWithValue, fulfillWithValue }) => {
+    const response = await Auth.status()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        return rejectWithValue(res)
+      })
     }
-      return response.json()
-    } catch(err) {
-      console.log('doesnt work')
-      return rejectWithValue(err.message)
-    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const loginForm = createAsyncThunk(
   'auth/loginForm',
-  async(user) => {
+  async(user, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await Auth.login(user)
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const register = createAsyncThunk(
   'auth/register',
-  async(user) => {
+  async(user, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await Auth.register(user)
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => fulfillWithValue(res))
   }
 )
 
 export const favAddRemove = createAsyncThunk(
   'favorite/favAddRemove',
-  async(arg, { dispatch }) => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const form = new FormData()
     form.append('newsId', arg.newsId)
-    await Favorite.addRemove(form)
-    dispatch(getUserFavs())
+    const response = await Favorite.addRemove(form)
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => {
+      dispatch(getUserFavs())
+      return fulfillWithValue(res)
+    })
   }
 )
 
 export const getUserFavs = createAsyncThunk(
   'favorite/userFavs',
-  async() => {
+  async(arg, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const response = await Favorite.userFavs()
-    return response.json()
+    if(response.status !== 200) {
+      return response.json().then(res => {
+        dispatch(showErrorModal(res.message))
+        return rejectWithValue(res)
+      })
+    }
+    else return response.json().then(res => {
+      return fulfillWithValue(res)
+    })
   }
 )
 
@@ -88,18 +115,31 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
     .addCase(loginToken.fulfilled, (state, action) => {
+      let res = action.payload
       state.loggedIn = true
-      state.user = action.payload.user
-      localStorage.setItem('token', action.payload.token)
+      state.user = res.data.user
+      localStorage.setItem('token', res.data.token)
     })
     .addCase(loginForm.fulfilled, (state, action) => {
+      let res = action.payload
       state.loggedIn = true
-      state.user = action.payload.user
-      localStorage.setItem('token', action.payload.token)
+      state.user = res.data.user
+      localStorage.setItem('token', res.data.token)
+    })
+    .addCase(loginForm.rejected, (state, action) => {
+      console.log(action.payload.message)
+    })
+    .addCase(register.fulfilled, (state, action) => {
+      console.log("Success")
+      console.log(action.payload)
+    })
+    .addCase(register.rejected, (state, action) => {
+      console.log("Rejected")
+      console.log(action.payload)
     })
     .addCase(getUserFavs.fulfilled, (state, action) => {
       state.favChecked = true
-      let favs = action.payload
+      let favs = action.payload.data
       let favIds = []
       favIds = favs.map(fav => fav.newsItemId)
       state.userFavs = favIds
