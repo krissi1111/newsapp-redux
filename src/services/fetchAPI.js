@@ -52,6 +52,9 @@ export const News = {
   },
   delete: (form) => {
     return fetcher('POST', 'news/delete', form, true)
+  },
+  getFeeds: (form) => {
+    return fetcher('POST', 'news/feeds', form, true)
   }
 }
 
@@ -67,6 +70,12 @@ export const Comments = {
   },
   deleteReply: (form) => {
     return fetcher('POST', 'comment/deleteReply', form, true)
+  },
+  restore: (form) => {
+    return fetcher('POST', 'comment/restoreComment', form, true)
+  },
+  restoreReply: (form) => {
+    return fetcher('POST', 'comment/restoreReply', form, true)
   },
   edit: (form) => {
     return fetcher('PATCH', 'comment/editComment', form, true)

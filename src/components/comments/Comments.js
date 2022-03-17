@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Form, InputGroup, OverlayTrigger, Tooltip, useAccordionButton } from "react-bootstrap"
 import { useSelector, useDispatch } from 'react-redux';
-import { getComments, unloadComments, addComment, addReply, editComment, deleteComment, deleteReply, editReply } from "../../redux/slices/commentSlice";
+import { getComments, unloadComments, addComment, addReply, editComment, deleteComment, deleteReply, editReply, restoreComment, restoreReply } from "../../redux/slices/commentSlice";
 import { Icon } from '@iconify/react';
 import { selectLoggedIn, selectUser } from "../../redux/slices/authSlice";
 
@@ -61,9 +61,10 @@ export function CommentList(props) {
 
 export function CommentItem(props) {
   const { item, newsId, type } = props;
-  let { id, userId, userFullName, text, date, replies } = item
+  let { id, userId, userFullName, text, date, replies, isDeleted } = item
   let currentUser = useSelector(selectUser)
-  let isOwner = (userId === currentUser.id) || (currentUser.userType === 'Admin')
+  let isAdmin = (currentUser.userType === 'Admin')
+  let isOwner = isAdmin || ((userId === currentUser.id) && (!isDeleted))
   date = new Date(date).toLocaleString('is', {timeStyle: "short", dateStyle: "short"})
 
   const dispatch = useDispatch();
@@ -71,6 +72,35 @@ export function CommentItem(props) {
     if(type === 'Comment') dispatch(deleteComment({ commentId: id }))
     else if(type === 'Reply') dispatch(deleteReply({ replyId: id }))
   }
+
+  const handleRestore = () => {
+    if(type === 'Comment') dispatch(restoreComment({ commentId: id }))
+    else if(type === 'Reply') dispatch(restoreReply({ replyId: id }))
+  }
+
+  let deleteButton = (
+    <Button
+      variant='light'
+      size='sm'
+      onClick={handleDelete}
+      style={{backgroundColor: 'white'}}
+    >
+      <Icon inline={true} className="mx-1" icon='mdi:comment-remove-outline'/>
+      Delete
+    </Button>
+  )
+
+  let restoreButton = (
+    <Button
+      variant='light'
+      size='sm'
+      onClick={handleRestore}
+      style={{backgroundColor: 'white'}}
+    >
+      <Icon inline={true} className="mx-1" icon='mdi:restore'/>
+      Restore
+    </Button>
+  )
 
   return(
     <Card>
@@ -103,15 +133,7 @@ export function CommentItem(props) {
                   <Icon inline={true} className="mx-1" icon='mdi:comment-edit-outline'/>
                   Edit
                 </ToggleButton>
-                <Button
-                  variant='light'
-                  size='sm'
-                  onClick={handleDelete}
-                  style={{backgroundColor: 'white'}}
-                >
-                  <Icon inline={true} className="mx-1" icon='mdi:comment-remove-outline'/>
-                  Delete
-                </Button>
+                {isDeleted ? restoreButton : deleteButton}
               </>
               )
             }

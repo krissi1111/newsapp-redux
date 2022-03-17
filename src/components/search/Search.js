@@ -1,12 +1,16 @@
 import { Icon } from "@iconify/react";
-import { Button, Card, Form, Row } from "react-bootstrap";
+import { useEffect } from "react";
+import { Button, Collapse, Form, Row } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { getNewsSearch } from "../../redux/slices/newsDataSlice";
 import {
   setSearchString, 
   setSearchTitle, 
   setSearchSummary,
-  selectSearch
+  selectSearch,
+  getFeeds,
+  setSearchFeeds,
+  setSearchFeedsSelected
 } from '../../redux/slices/newsSearchSlice';
 import { SearchDate } from "./SearchDate";
 
@@ -14,6 +18,10 @@ import { SearchDate } from "./SearchDate";
 export function SearchContainer(props) {
   const dispatch = useDispatch();
   const handleSearch = (event) => dispatch(getNewsSearch(event.target.value))
+
+  useEffect(() => {
+    dispatch(getFeeds())
+  }, [dispatch])
 
   return(
     <>
@@ -25,6 +33,9 @@ export function SearchContainer(props) {
         </Row>
         <Row className="mb-3">
           <SearchDate/>
+        </Row>
+        <Row className="mb-3">
+          <SearchFeeds/>
         </Row>
         <Button onClick={handleSearch}>
           <Icon inline={true} icon='ant-design:file-search-outlined'/> Search
@@ -52,6 +63,7 @@ function SearchString() {
 
 function SearchSelectors() {
   let { searchTitle, searchSummary } = useSelector(selectSearch)
+  
   const dispatch = useDispatch();
   const handleSearchSelection = (title, summary) => {
     dispatch(setSearchTitle(title));
@@ -77,6 +89,50 @@ function SearchSelectors() {
         label="Search Summary" />
     </Form.Group>
   );
+}
+
+function SearchFeeds() {
+  let { searchFeedsData, searchFeedsSelected, searchFeeds } = useSelector(selectSearch)
+  
+  const dispatch = useDispatch();
+  const handleSetSearchFeeds = (search) => {
+    dispatch(setSearchFeeds(search))
+  }
+  const handleFeedSelection = (feedId) => {
+    dispatch(setSearchFeedsSelected(feedId))
+  }
+
+  return (
+    <Form.Group>
+      <Form.Label>Feeds</Form.Label>
+      <Form.Check 
+        type="radio"
+        label="Search all feeds"
+        checked={!searchFeeds}
+        onChange={() => handleSetSearchFeeds(false)}
+      />
+      <Form.Check 
+        type="radio"
+        label="Select feeds"
+        checked={searchFeeds}
+        onChange={() => handleSetSearchFeeds(true)}
+      />
+      <Collapse in={searchFeeds}>
+        <div>
+          {searchFeedsData.map(feed => (
+            <Form.Check
+              key={feed.feedName}
+              className="mx-3"
+              type="checkbox"
+              label={feed.feedName}
+              checked={searchFeedsSelected.includes(feed.id)}
+              onChange={() => handleFeedSelection(feed.id)}
+            />
+          ))}
+        </div>
+      </Collapse>
+    </Form.Group>
+  )
 }
 
 export default SearchContainer

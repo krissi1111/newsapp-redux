@@ -54,7 +54,7 @@ export function NewsCardPages(props) {
                 {page}
               </Pagination.Item>
               ) : (page === 1) ?(
-                <Pagination.Item 
+              <Pagination.Item 
                 key={page} 
                 active={page === pageCurrent + 1}
                 onClick={() => handlePageChange(page-1)}
@@ -62,9 +62,9 @@ export function NewsCardPages(props) {
                 {page}
               </Pagination.Item>
               ) : (page === 2 && pageCurrent >= 4) || (page === pageCount-1 && pageCurrent <= pageCount-2) ?(
-              <Pagination.Ellipsis/>
+              <Pagination.Ellipsis key={page}/>
               ) : (page === pageCount) ?(
-                <Pagination.Item 
+              <Pagination.Item 
                 key={page} 
                 active={page === pageCurrent + 1}
                 onClick={() => handlePageChange(page-1)}
@@ -72,7 +72,7 @@ export function NewsCardPages(props) {
                 {page}
               </Pagination.Item>
               ) : (
-                <></>
+               null
               )
           )
         }

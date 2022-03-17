@@ -6,9 +6,15 @@ import { useState } from "react";
 import { Icon } from '@iconify/react';
 
 export function NewsCardItem(props) {
-  let { title, summary, link, image, date, origin } = props.newsItem;
+  let { title, summary, link, image, date, newsFeedId } = props.newsItem;
+  let feeds = props.feeds
   const dispatch = useDispatch();
   let [imgSource, setImageSource] = useState('')
+
+  let feedName = '(feed name)'
+  feeds.forEach(feed => {
+    if(feed.id === newsFeedId) feedName = feed.feedName
+  });
 
   const summaryLength = 150;
   if (summary.length > summaryLength) summary = summary.substring(0, summaryLength) + "...";
@@ -39,7 +45,7 @@ export function NewsCardItem(props) {
             <Icon inline={true} icon='mdi:calendar-month'/> {date}
           </Card.Subtitle>
           <Card.Subtitle className="mb-2 text-muted">
-            <Icon inline={true} icon='bytesize:home'/> <a className="mb-2 text-muted" href={link}>{origin}</a>
+            <Icon inline={true} icon='bytesize:home'/> <a className="mb-2 text-muted" href={link}>{feedName}</a>
           </Card.Subtitle>
           
           <Card.Text>{summary}</Card.Text>
