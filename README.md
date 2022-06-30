@@ -1,3 +1,5 @@
+NOTE: This is the old frontend for my news app project. please use [this one instead](https://github.com/krissi1111/newsappretype)
+
 
 This is the frontend of my newsapp project. <br />
 It is meant to be run in conjunction with the backend [here](https://github.com/krissi1111/NewsAppNet)
